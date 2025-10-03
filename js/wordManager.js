@@ -14,14 +14,14 @@ class WordManager {
     }
     
     // Sélectionner un mot aléatoire (avec support filtrage par catégorie)
-    selectRandomWord(difficulty, userManager, categoryFilter = 'toutes') {
-        // TOUS les mots du niveau (pour vérifier complétion totale)
-        const allWordsInLevel = Object.keys(this.hints[difficulty]);
+    selectRandomWord(userManager, categoryFilter = 'toutes') {
+        // TOUS les mots du jeu
+        const allWords = Object.keys(this.hints);
         
         // Mots de la catégorie filtrée
-        let filteredWords = allWordsInLevel;
+        let filteredWords = allWords;
         if (categoryFilter && categoryFilter !== 'toutes' && typeof getWordsByCategory === 'function') {
-            filteredWords = getWordsByCategory(categoryFilter, difficulty, this.hints);
+            filteredWords = getWordsByCategory(categoryFilter, this.hints);
             console.log(`🗂️ Filtre catégorie "${categoryFilter}": ${filteredWords.length} mots disponibles`);
         }
         
@@ -29,18 +29,18 @@ class WordManager {
         
         // Filtrer les mots déjà trouvés seulement si l'utilisateur est connecté
         if (userManager.isLoggedIn()) {
-            availableWords = userManager.getAvailableWords(filteredWords, difficulty);
+            availableWords = userManager.getAvailableWords(filteredWords);
             
-            console.log(`🔍 Sélection mot ${difficulty}: ${availableWords.length}/${filteredWords.length} disponibles`);
+            console.log(`🔍 Sélection mot: ${availableWords.length}/${filteredWords.length} disponibles`);
             
             // Si aucun mot disponible dans la catégorie filtrée
             if (availableWords.length === 0) {
-                // Vérifier si TOUS les mots du niveau (pas juste la catégorie) sont complétés
-                const allAvailableWords = userManager.getAvailableWords(allWordsInLevel, difficulty);
-                const isLevelComplete = allAvailableWords.length === 0;
+                // Vérifier si TOUS les mots du jeu sont complétés
+                const allAvailableWords = userManager.getAvailableWords(allWords);
+                const isGameComplete = allAvailableWords.length === 0;
                 
-                if (isLevelComplete) {
-                    console.log(`🏆 Tous les mots ${difficulty} du NIVEAU trouvés !`);
+                if (isGameComplete) {
+                    console.log(`🏆 Tous les mots du jeu trouvés !`);
                     return {
                         word: null,
                         allWordsCompleted: true,
@@ -64,13 +64,13 @@ class WordManager {
         };
     }
     
-    // Obtenir l'indice d'un mot (supporte ancien et nouveau format)
-    getHint(word, difficulty) {
-        const data = this.hints[difficulty][word];
+    // Obtenir l'indice d'un mot
+    getHint(word) {
+        const data = this.hints[word];
         
         if (!data) return null;
         
-        // Nouveau format: { hint: "...", category: "..." }
+        // Format: { hint: "...", cat: ID }
         if (typeof data === 'object' && data.hint) {
             return data.hint;
         }
@@ -149,8 +149,8 @@ class WordManager {
         return count;
     }
     
-    // Obtenir tous les mots d'une difficulté
-    getWordsByDifficulty(difficulty) {
-        return Object.keys(this.hints[difficulty]);
+    // Obtenir tous les mots
+    getAllWords() {
+        return Object.keys(this.hints);
     }
 }

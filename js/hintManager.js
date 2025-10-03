@@ -11,15 +11,22 @@ class HintManager {
         this.helpUsedCount = 0;
         this.maxHelpAllowed = 1; // Par défaut 1 aide
         this.lastHelpedCursorPosition = -1; // Position du curseur lors de la dernière aide
+        this.currentWordLength = 0; // Longueur du mot actuel
     }
     
-    // Définir le nombre maximum d'aides selon la difficulté
-    setMaxHelp(difficulty) {
-        if (difficulty === 'hard') {
-            this.maxHelpAllowed = 2; // 2 aides en mode difficile
+    // Définir le nombre maximum d'aides selon la longueur du mot
+    setMaxHelpByWordLength(wordLength) {
+        this.currentWordLength = wordLength;
+        
+        // Plus le mot est long, plus on donne d'aides (car plus difficile)
+        if (wordLength <= 4) {
+            this.maxHelpAllowed = 1; // Mots courts (3-4 lettres) : 1 aide
+        } else if (wordLength <= 6) {
+            this.maxHelpAllowed = 1; // Mots moyens (5-6 lettres) : 1 aide
         } else {
-            this.maxHelpAllowed = 1; // 1 aide en facile/moyen
+            this.maxHelpAllowed = 2; // Mots longs (7+ lettres) : 2 aides
         }
+        
         this.updateHelpButton();
     }
     
@@ -90,8 +97,8 @@ class HintManager {
     }
     
     // Afficher l'indice pour la lettre
-    showRevealedLetter(letter, position, difficulty) {
-        const message = this.generateAlternativeHint(letter, position, difficulty);
+    showRevealedLetter(letter, position) {
+        const message = this.generateAlternativeHint(letter, position);
         this.domElements.revealedLetter.textContent = message;
         this.domElements.revealedLetter.classList.remove('hidden');
     }
@@ -172,7 +179,7 @@ class HintManager {
         return factors;
     }
     
-    // Générer un indice de voisinage simple (lettre avant/après) - NIVEAU FACILE
+    // Générer un indice de voisinage simple (lettre avant/après) - MOTS COURTS (3-4 lettres)
     generateSimpleNeighborHint(letter) {
         const position = this.getLetterPosition(letter);
         const hints = [];
@@ -192,7 +199,7 @@ class HintManager {
         return hints[Math.floor(Math.random() * hints.length)];
     }
     
-    // Générer un indice avec calcul +/- (ex: "Lettre après B+2") - NIVEAU DIFFICILE
+    // Générer un indice avec calcul +/- (ex: "Lettre après B+2") - MOTS LONGS (7+ lettres)
     generateComplexNeighborHint(letter) {
         const position = this.getLetterPosition(letter);
         const hints = [];
@@ -214,23 +221,23 @@ class HintManager {
         return hints[Math.floor(Math.random() * hints.length)];
     }
     
-    // Générer un indice alternatif selon le niveau de difficulté
-    generateAlternativeHint(letter, position, difficulty) {
+    // Générer un indice alternatif selon la longueur du mot
+    generateAlternativeHint(letter, position) {
         const letterPosition = this.getLetterPosition(letter);
         let hintMessage = '';
         
-        // EASY : Indice simple (lettre avant/après)
-        if (difficulty === 'easy') {
+        // MOTS COURTS (3-4 lettres) : Indice simple (lettre avant/après)
+        if (this.currentWordLength <= 4) {
             const neighborHint = this.generateSimpleNeighborHint(letter);
             hintMessage = `💡 ${neighborHint}`;
         }
-        // MEDIUM : Calcul de position dans l'alphabet
-        else if (difficulty === 'medium') {
+        // MOTS MOYENS (5-6 lettres) : Calcul de position dans l'alphabet
+        else if (this.currentWordLength <= 6) {
             const calculation = this.generateMathHint(letterPosition);
             hintMessage = `💡 Position dans l'alphabet = ${calculation}`;
         }
-        // HARD : Calcul avec +/- (ex: "Lettre après B+2")
-        else if (difficulty === 'hard') {
+        // MOTS LONGS (7+ lettres) : Calcul avec +/- (ex: "Lettre après B+2")
+        else {
             const complexHint = this.generateComplexNeighborHint(letter);
             hintMessage = `💡 ${complexHint}`;
         }
@@ -239,7 +246,7 @@ class HintManager {
     }
     
     // Révéler la prochaine lettre manquante
-    revealNextLetter(currentWord, letterBoxes, currentCursorPosition, difficulty) {
+    revealNextLetter(currentWord, letterBoxes, currentCursorPosition) {
         if (!this.canUseHelp()) {
             return null;
         }
@@ -265,7 +272,7 @@ class HintManager {
         
         if (nextMissingIndex !== -1) {
             const revealedLetter = currentWord[nextMissingIndex];
-            this.showRevealedLetter(revealedLetter, nextMissingIndex, difficulty);
+            this.showRevealedLetter(revealedLetter, nextMissingIndex);
             this.lastHelpedCursorPosition = currentCursorPosition; // Sauvegarder la position du curseur
             this.markHelpUsed();
             
@@ -297,4 +304,3 @@ class HintManager {
         this.lastHelpedCursorPosition = -1;
     }
 }
-

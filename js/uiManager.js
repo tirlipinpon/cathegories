@@ -3,13 +3,6 @@ class UIManager {
     constructor() {
         this.domElements = {};
         this.cacheDOMElements();
-        
-        // Constantes
-        this.DIFFICULTY_NAMES = {
-            'easy': '🟢 Facile',
-            'medium': '🟠 Moyen', 
-            'hard': '🔴 Difficile'
-        };
     }
     
     // Afficher la version dans l'UI
@@ -27,43 +20,11 @@ class UIManager {
             wordDisplay: document.getElementById('wordDisplay'),
             feedback: document.getElementById('feedback'),
             timer: document.getElementById('timer'),
-            starsDisplay: document.getElementById('starsDisplay'),
-            scoreSection: document.getElementById('scoreSection'),
-            difficultySection: document.querySelector('.difficulty-section'),
-            levelStatus: document.getElementById('levelStatus'),
             usernameInput: document.getElementById('usernameInput'),
             loginBtn: document.getElementById('loginBtn'),
             logoutBtn: document.getElementById('logoutBtn'),
             userInfo: document.getElementById('userInfo'),
-            currentUser: document.getElementById('currentUser'),
-            scoreToggle: document.getElementById('scoreToggle'),
-            scoreContent: document.getElementById('scoreContent'),
-            // Boutons de difficulté
-            easyBtn: document.getElementById('easyBtn'),
-            mediumBtn: document.getElementById('mediumBtn'),
-            hardBtn: document.getElementById('hardBtn'),
-            // Compteurs de difficulté
-            easyCount: document.getElementById('easyCount'),
-            mediumCount: document.getElementById('mediumCount'),
-            hardCount: document.getElementById('hardCount'),
-            // Stats
-            stars: document.getElementById('stars'),
-            level: document.getElementById('level'),
-            wordsFound: document.getElementById('wordsFound'),
-            totalWords: document.getElementById('totalWords'),
-            avgTime: document.getElementById('avgTime'),
-            bestTime: document.getElementById('bestTime'),
-            currentStreak: document.getElementById('currentStreak'),
-            bestStreak: document.getElementById('bestStreak'),
-            accuracy: document.getElementById('accuracy'),
-            wordsEasy: document.getElementById('wordsEasy'),
-            wordsMedium: document.getElementById('wordsMedium'),
-            wordsHard: document.getElementById('wordsHard'),
-            sessionTime: document.getElementById('sessionTime'),
-            totalGameTime: document.getElementById('totalGameTime'),
-            perfectGames: document.getElementById('perfectGames'),
-            progressionTrend: document.getElementById('progressionTrend'),
-            difficultLetters: document.getElementById('difficultLetters')
+            currentUser: document.getElementById('currentUser')
         };
     }
     
@@ -199,23 +160,6 @@ class UIManager {
         });
     }
     
-    // Afficher les étoiles
-    showStars(count) {
-        this.domElements.starsDisplay.innerHTML = '';
-        
-        for (let i = 0; i < count; i++) {
-            const star = document.createElement('span');
-            star.className = 'star';
-            star.textContent = '⭐';
-            star.style.animationDelay = `${i * 0.2}s`;
-            this.domElements.starsDisplay.appendChild(star);
-        }
-        
-        setTimeout(() => {
-            this.domElements.starsDisplay.innerHTML = '';
-        }, 3000);
-    }
-    
     // Afficher un message de feedback
     showFeedback(message, type) {
         this.domElements.feedback.textContent = message;
@@ -267,9 +211,6 @@ class UIManager {
     
     // Afficher/masquer les sections selon l'état de connexion
     updateVisibilityForLogin(isLoggedIn) {
-        this.domElements.scoreSection.style.display = isLoggedIn ? 'block' : 'none';
-        this.domElements.difficultySection.style.display = isLoggedIn ? 'block' : 'none';
-        
         if (isLoggedIn) {
             this.domElements.usernameInput.style.display = 'none';
             this.domElements.loginBtn.style.display = 'none';
@@ -278,106 +219,6 @@ class UIManager {
             this.domElements.usernameInput.style.display = 'inline-block';
             this.domElements.loginBtn.style.display = 'inline-block';
             this.domElements.userInfo.classList.add('hidden');
-        }
-    }
-    
-    // Mettre à jour le niveau
-    updateLevelDisplay(level, isLoggedIn) {
-        if (isLoggedIn) {
-            this.domElements.levelStatus.textContent = `Niveau ${level}`;
-            this.domElements.levelStatus.style.display = 'block';
-        } else {
-            this.domElements.levelStatus.style.display = 'none';
-        }
-    }
-    
-    // Mettre à jour les boutons de difficulté
-    updateDifficultyButtons(currentDifficulty) {
-        const difficulties = ['easy', 'medium', 'hard'];
-        document.querySelectorAll('.difficulty-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        this.domElements[`${currentDifficulty}Btn`].classList.add('active');
-    }
-    
-    // Bloquer un bouton de difficulté (niveau complété)
-    disableDifficultyButton(difficulty) {
-        const btn = this.domElements[`${difficulty}Btn`];
-        if (btn) {
-            btn.disabled = true;
-            btn.classList.add('completed');
-            btn.style.opacity = '0.6';
-            btn.style.cursor = 'not-allowed';
-            console.log(`🔒 Bouton ${difficulty} bloqué`);
-        }
-    }
-    
-    // Débloquer un bouton de difficulté
-    enableDifficultyButton(difficulty) {
-        const btn = this.domElements[`${difficulty}Btn`];
-        if (btn) {
-            btn.disabled = false;
-            btn.classList.remove('completed');
-            btn.style.opacity = '1';
-            btn.style.cursor = 'pointer';
-        }
-    }
-    
-    // Mettre à jour les compteurs de difficulté
-    updateDifficultyCounts(difficultyCounts, isLoggedIn) {
-        Object.entries(difficultyCounts).forEach(([difficulty, data]) => {
-            const countElement = this.domElements[`${difficulty}Count`];
-            if (isLoggedIn) {
-                countElement.textContent = `(${data.found})`;
-            } else {
-                countElement.textContent = `(0)`;
-            }
-        });
-    }
-    
-    // Mettre à jour les scores
-    updateScore(stars, level, wordsFound) {
-        this.domElements.stars.textContent = stars;
-        this.domElements.level.textContent = level;
-        this.domElements.wordsFound.textContent = wordsFound;
-    }
-    
-    // Mettre à jour les statistiques
-    updateStats(stats, formatTimeFn) {
-        this.domElements.totalWords.textContent = stats.totalWordsFound;
-        
-        if (stats.avgTime) {
-            this.domElements.avgTime.textContent = formatTimeFn(stats.avgTime);
-        }
-        
-        if (stats.bestTime !== null) {
-            this.domElements.bestTime.textContent = formatTimeFn(stats.bestTime);
-        }
-        
-        this.domElements.currentStreak.textContent = stats.currentStreak;
-        this.domElements.bestStreak.textContent = stats.bestStreak;
-        
-        if (stats.accuracy) {
-            this.domElements.accuracy.textContent = stats.accuracy + '%';
-        }
-        
-        // Statistiques avancées
-        if (stats.advanced) {
-            this.domElements.wordsEasy.textContent = stats.advanced.wordsByDifficulty.easy;
-            this.domElements.wordsMedium.textContent = stats.advanced.wordsByDifficulty.medium;
-            this.domElements.wordsHard.textContent = stats.advanced.wordsByDifficulty.hard;
-            this.domElements.sessionTime.textContent = formatTimeFn(stats.advanced.sessionTime);
-            this.domElements.totalGameTime.textContent = formatTimeFn(stats.advanced.totalGameTime);
-            this.domElements.perfectGames.textContent = stats.advanced.perfectGames;
-            this.domElements.progressionTrend.textContent = stats.advanced.progressionTrend;
-            
-            const difficultLetters = stats.advanced.difficultLetters;
-            if (difficultLetters.length > 0) {
-                const topLetter = difficultLetters[0];
-                this.domElements.difficultLetters.textContent = `${topLetter.letter} (${topLetter.errors})`;
-            } else {
-                this.domElements.difficultLetters.textContent = '-';
-            }
         }
     }
     

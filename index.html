@@ -23,20 +23,9 @@
             </div>
         </div>
 
-        <div class="difficulty-section">
-            <div class="difficulty-buttons">
-                <button class="btn difficulty-btn active" data-difficulty="easy" id="easyBtn">
-                    🟢 Facile
-                    <span class="words-count" id="easyCount">(0/0)</span>
-                </button>
-                <button class="btn difficulty-btn" data-difficulty="medium" id="mediumBtn">
-                    🟠 Moyen
-                    <span class="words-count" id="mediumCount">(0/0)</span>
-                </button>
-                <button class="btn difficulty-btn" data-difficulty="hard" id="hardBtn">
-                    🔴 Difficile
-                    <span class="words-count" id="hardCount">(0/0)</span>
-                </button>
+        <div class="category-section">
+            <div class="category-buttons">
+                <label for="categorySelect" class="category-label">Catégorie :</label>
                 <select class="category-select" id="categorySelect">
                     <option value="toutes">📦 Toutes</option>
                 </select>
@@ -71,123 +60,30 @@
             </div>
         </div>
 
-        <!-- Passage automatique au mot suivant - pas de bouton nécessaire -->
+        <div class="timer-section">
+            <div class="timer-display">
+                <span class="timer-icon">⏱️</span>
+                <span class="timer-value" id="timer">0s</span>
+            </div>
+        </div>
 
         <div class="feedback" id="feedback">
             Devine le mot de 4 lettres ! 💭
         </div>
-
-        <div class="stars" id="starsDisplay"></div>
-
-        <div class="toggle-section" id="scoreSection">
-            <div class="toggle-header" id="scoreToggle">
-                <div class="toggle-header-info">
-                    <h3>📊 Score et Statistiques</h3>
-                    <span class="toggle-subtitle" id="levelStatus">Niveau 1</span>
-                </div>
-                <span class="toggle-icon">+</span>
-            </div>
-            <div class="toggle-content hidden" id="scoreContent">
-                <div class="score-board">
-                    <div class="score-item">
-                        <h3>⭐ Étoiles</h3>
-                        <div class="score-value" id="stars">0</div>
-                    </div>
-                    <div class="score-item">
-                        <h3>🏆 Niveau</h3>
-                        <div class="score-value" id="level">1</div>
-                    </div>
-                    <div class="score-item">
-                        <h3>⏱️ Temps</h3>
-                        <div class="score-value" id="timer">0s</div>
-                    </div>
-                    <div class="score-item">
-                        <h3>📊 Mots</h3>
-                        <div class="score-value" id="wordsFound">0</div>
-                    </div>
-                </div>
-                <div class="stats-grid">
-                    <!-- Statistiques de base -->
-                    <div class="stat-item">
-                        <div class="stat-label">Mots trouvés</div>
-                        <div class="stat-value" id="totalWords">0</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Temps moyen</div>
-                        <div class="stat-value" id="avgTime">0s</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Meilleur temps</div>
-                        <div class="stat-value" id="bestTime">-</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Série actuelle</div>
-                        <div class="stat-value" id="currentStreak">0</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Meilleure série</div>
-                        <div class="stat-value" id="bestStreak">0</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Précision</div>
-                        <div class="stat-value" id="accuracy">0%</div>
-                    </div>
-                    
-                    <!-- Nouvelles statistiques -->
-                    <div class="stat-item">
-                        <div class="stat-label">Mots Facile</div>
-                        <div class="stat-value" id="wordsEasy">0</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Mots Moyen</div>
-                        <div class="stat-value" id="wordsMedium">0</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Mots Difficile</div>
-                        <div class="stat-value" id="wordsHard">0</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Temps session</div>
-                        <div class="stat-value" id="sessionTime">0s</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Temps total</div>
-                        <div class="stat-value" id="totalGameTime">0s</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Perfect games</div>
-                        <div class="stat-value" id="perfectGames">0</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Progression</div>
-                        <div class="stat-value" id="progressionTrend">-</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Lettres difficiles</div>
-                        <div class="stat-value" id="difficultLetters">-</div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <!-- Données (chargées dans l'ordre: facile, moyen, difficile, puis combinaison) -->
-    <script src="js/data-easy.js"></script>
-    <script src="js/data-medium.js"></script>
-    <script src="js/data-hard.js"></script>
+    <!-- Données -->
     <script src="js/data.js"></script>
     <script src="js/categories.js"></script>
     
     <!-- Modules de gestion -->
     <script src="js/userManager.js"></script>
-    <script src="js/statsManager.js"></script>
     <script src="js/soundManager.js"></script>
     <script src="js/uiManager.js"></script>
     <script src="js/hintManager.js"></script>
     <script src="js/wordManager.js"></script>
     <script src="js/timerManager.js"></script>
     <script src="js/inputHandler.js"></script>
-    <script src="js/levelProgressionManager.js"></script>
     
     <!-- Jeu principal -->
     <script src="js/game.js"></script>

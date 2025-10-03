@@ -1,5 +1,5 @@
 // Définition centralisée des catégories
-// Format: ID numérique pour chaque catégorie (utilisé dans les fichiers data-*.js)
+// Format: ID numérique pour chaque catégorie (utilisé dans le fichier data.js)
 // Les mots ont un attribut "cat" qui référence l'ID de la catégorie
 
 const CATEGORIES = [
@@ -39,25 +39,25 @@ function getCategoryByKey(key) {
     return CATEGORIES_BY_KEY[key] || CATEGORIES_BY_KEY['autres'];
 }
 
-// Fonction pour obtenir les mots d'une catégorie dans un niveau
-function getWordsByCategory(categoryKey, difficulty, gameData) {
-    const allWordsInLevel = Object.keys(gameData[difficulty]);
+// Fonction pour obtenir les mots d'une catégorie
+function getWordsByCategory(categoryKey, gameData) {
+    const allWords = Object.keys(gameData);
     
     if (categoryKey === 'toutes' || categoryKey === 0) {
-        return allWordsInLevel; // Tous les mots du niveau
+        return allWords; // Tous les mots du jeu
     }
     
     // Trouver l'ID de la catégorie
     const category = getCategoryByKey(categoryKey);
-    if (!category) return allWordsInLevel;
+    if (!category) return allWords;
     
     const categoryId = category.id;
     
     // Filtrer les mots par ID de catégorie
-    return allWordsInLevel.filter(word => {
-        const wordData = gameData[difficulty][word];
+    return allWords.filter(word => {
+        const wordData = gameData[word];
         
-        // Nouveau format: { hint: "...", cat: 1 }
+        // Format: { hint: "...", cat: 1 }
         if (typeof wordData === 'object' && wordData.cat !== undefined) {
             return wordData.cat === categoryId;
         }
@@ -67,15 +67,15 @@ function getWordsByCategory(categoryKey, difficulty, gameData) {
     });
 }
 
-// Fonction pour obtenir les catégories disponibles dans un niveau
-function getAvailableCategoriesForLevel(difficulty, gameData, userManager = null) {
-    const allWordsInLevel = Object.keys(gameData[difficulty]);
+// Fonction pour obtenir les catégories disponibles
+function getAvailableCategories(gameData, userManager = null) {
+    const allWords = Object.keys(gameData);
     const availableCategories = [];
     
     // Toujours ajouter "toutes" en premier
     const allAvailableWords = userManager && userManager.isLoggedIn() 
-        ? userManager.getAvailableWords(allWordsInLevel, difficulty)
-        : allWordsInLevel;
+        ? userManager.getAvailableWords(allWords)
+        : allWords;
     
     if (allAvailableWords.length > 0) {
         availableCategories.push('toutes');
@@ -85,10 +85,10 @@ function getAvailableCategoriesForLevel(difficulty, gameData, userManager = null
     const categoryCounts = {};
     
     allAvailableWords.forEach(word => {
-        const wordData = gameData[difficulty][word];
+        const wordData = gameData[word];
         let categoryId = 99; // Autres par défaut
         
-        // Nouveau format: { hint: "...", cat: 1 }
+        // Format: { hint: "...", cat: 1 }
         if (typeof wordData === 'object' && wordData.cat !== undefined) {
             categoryId = wordData.cat;
         }
@@ -107,8 +107,8 @@ function getAvailableCategoriesForLevel(difficulty, gameData, userManager = null
 }
 
 // Fonction pour compter les mots restants dans une catégorie
-function getWordCountInCategory(categoryKey, difficulty, gameData, userManager = null) {
-    const wordsInCategory = getWordsByCategory(categoryKey, difficulty, gameData);
+function getWordCountInCategory(categoryKey, gameData, userManager = null) {
+    const wordsInCategory = getWordsByCategory(categoryKey, gameData);
     
     // Si pas d'utilisateur connecté, retourner tous les mots
     if (!userManager || !userManager.isLoggedIn()) {
@@ -116,7 +116,7 @@ function getWordCountInCategory(categoryKey, difficulty, gameData, userManager =
     }
     
     // Filtrer les mots déjà trouvés
-    const availableWords = userManager.getAvailableWords(wordsInCategory, difficulty);
+    const availableWords = userManager.getAvailableWords(wordsInCategory);
     return availableWords.length;
 }
 
