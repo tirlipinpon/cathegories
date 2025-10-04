@@ -1,6 +1,6 @@
 // Jeu principal - Orchestrateur
-// Version: 2.0.4
-const GAME_VERSION = '2.0.4';
+// Version: 2.0.6
+const GAME_VERSION = '2.0.6';
 
 class WordGuessingGame {
     constructor() {
@@ -21,7 +21,6 @@ class WordGuessingGame {
         this.soundManager = new SoundManager();
         this.hintManager = new HintManager();
         this.wordManager = new WordManager(GAME_DATA);
-        this.timer = new TimerManager(this.ui.domElements.timer);
         this.userManager = new UserManager();
         
         // Nouveaux gestionnaires
@@ -50,7 +49,6 @@ class WordGuessingGame {
         if (!this.userManager.isLoggedIn()) {
             this.selectRandomWord();
             this.ui.createLetterBoxes(this.currentWord.length);
-            this.timer.start();
             this.hintManager.resetHelp();
             this.inputHandler.reset();
         }
@@ -79,7 +77,6 @@ class WordGuessingGame {
                 this.updateCategorySelect();
                 this.selectRandomWord();
                 this.ui.createLetterBoxes(this.currentWord.length);
-                this.timer.start();
                 this.hintManager.resetHelp();
                 this.inputHandler.reset();
             }, 2000);
@@ -202,13 +199,10 @@ class WordGuessingGame {
     }
 
     showCorrectWord() {
-        this.timer.stop();
-        const timeElapsed = this.timer.getElapsed();
-        
         this.isCurrentWordCorrect = true;
         this.soundManager.play('wordFound');
         this.ui.showVictoryEffect();
-        this.ui.showFeedback(`🎉 BRAVO ! Tu as trouvé "${this.currentWord.toUpperCase()}" en ${timeElapsed}s !`, 'success');
+        this.ui.showFeedback(`🎉 BRAVO ! Tu as trouvé "${this.currentWord.toUpperCase()}" !`, 'success');
         this.ui.createCelebration();
         this.inputHandler.reset();
         
@@ -219,14 +213,11 @@ class WordGuessingGame {
     }
 
     handleWin() {
-        this.timer.stop();
-        const timeElapsed = this.timer.getElapsed();
-        
         if (this.userManager.isLoggedIn()) {
             this.saveProgress();
         }
         
-        this.ui.showFeedback(`🎉 BRAVO ! Tu as trouvé "${this.currentWord.toUpperCase()}" en ${timeElapsed}s !`, 'success');
+        this.ui.showFeedback(`🎉 BRAVO ! Tu as trouvé "${this.currentWord.toUpperCase()}" !`, 'success');
         this.ui.createCelebration();
         this.inputHandler.reset();
     }
@@ -247,11 +238,9 @@ class WordGuessingGame {
         this.isCurrentWordCorrect = false;
         this.helpUsed = false;
         
-        this.timer.stop();
         this.selectRandomWord();
         this.ui.createLetterBoxes(this.currentWord.length);
         this.ui.showFeedback(`Nouveau mot de ${this.currentWord.length} lettres ! Devine-le ! 💭`, 'info');
-        this.timer.start();
         this.ui.resetLetterBoxes();
         this.hintManager.resetHelp();
         this.inputHandler.reset();
@@ -331,7 +320,6 @@ class WordGuessingGame {
                 // Lancer un mot
                 this.selectRandomWord();
                 this.ui.createLetterBoxes(this.currentWord.length);
-                this.timer.start();
                 this.hintManager.resetHelp();
                 this.inputHandler.reset();
             }

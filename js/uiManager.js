@@ -19,7 +19,6 @@ class UIManager {
         this.domElements = {
             wordDisplay: document.getElementById('wordDisplay'),
             feedback: document.getElementById('feedback'),
-            timer: document.getElementById('timer'),
             usernameInput: document.getElementById('usernameInput'),
             loginBtn: document.getElementById('loginBtn'),
             logoutBtn: document.getElementById('logoutBtn'),

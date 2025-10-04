@@ -19,12 +19,10 @@ class HintManager {
         this.currentWordLength = wordLength;
         
         // Plus le mot est long, plus on donne d'aides (car plus difficile)
-        if (wordLength <= 4) {
-            this.maxHelpAllowed = 1; // Mots courts (3-4 lettres) : 1 aide
-        } else if (wordLength <= 6) {
-            this.maxHelpAllowed = 1; // Mots moyens (5-6 lettres) : 1 aide
+        if (wordLength < 7) {
+            this.maxHelpAllowed = 1; // Mots de moins de 7 lettres : 1 aide
         } else {
-            this.maxHelpAllowed = 2; // Mots longs (7+ lettres) : 2 aides
+            this.maxHelpAllowed = 2; // Mots de 7 lettres et plus : 2 aides
         }
         
         this.updateHelpButton();
