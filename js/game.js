@@ -1,6 +1,6 @@
 // Jeu principal - Orchestrateur
-// Version: 2.1.0
-const GAME_VERSION = '2.1.0';
+// Version: 2.1.1
+const GAME_VERSION = '2.1.1';
 
 class WordGuessingGame {
     constructor() {
@@ -289,13 +289,10 @@ class WordGuessingGame {
         if (selectedUsername) {
             this.ui.domElements.usernameInput.value = selectedUsername;
             
-            // Mettre le bouton de connexion en vert
-            this.ui.domElements.loginBtn.classList.add('btn-ready');
-            this.ui.domElements.loginBtn.style.background = 'linear-gradient(45deg, #10b981, #059669)';
+            // Connexion automatique
+            this.handleLogin();
         } else {
             this.ui.domElements.usernameInput.value = '';
-            this.ui.domElements.loginBtn.classList.remove('btn-ready');
-            this.ui.domElements.loginBtn.style.background = '';
         }
     }
     
