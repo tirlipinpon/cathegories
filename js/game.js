@@ -1,6 +1,6 @@
 // Jeu principal - Orchestrateur
-// Version: 2.0.6
-const GAME_VERSION = '2.0.6';
+// Version: 2.1.0
+const GAME_VERSION = '2.1.0';
 
 class WordGuessingGame {
     constructor() {
@@ -42,6 +42,7 @@ class WordGuessingGame {
         this.setupEventListeners();
         this.updateVisibility();
         this.updateCategorySelect();
+        this.populateUserSelect();
     }
 
     initializeGame() {
@@ -104,6 +105,9 @@ class WordGuessingGame {
         this.ui.domElements.usernameInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.handleLogin();
         });
+        
+        // Sélecteur d'utilisateurs
+        this.ui.domElements.usernameSelect.addEventListener('change', (e) => this.handleUserSelect(e));
         
         // Bouton d'aide
         this.hintManager.domElements.helpBtn.addEventListener('click', () => this.handleHelp());
@@ -278,6 +282,63 @@ class WordGuessingGame {
         }
     }
 
+    // Gérer le changement de sélection d'utilisateur
+    handleUserSelect(event) {
+        const selectedUsername = event.target.value;
+        
+        if (selectedUsername) {
+            this.ui.domElements.usernameInput.value = selectedUsername;
+            
+            // Mettre le bouton de connexion en vert
+            this.ui.domElements.loginBtn.classList.add('btn-ready');
+            this.ui.domElements.loginBtn.style.background = 'linear-gradient(45deg, #10b981, #059669)';
+        } else {
+            this.ui.domElements.usernameInput.value = '';
+            this.ui.domElements.loginBtn.classList.remove('btn-ready');
+            this.ui.domElements.loginBtn.style.background = '';
+        }
+    }
+    
+    // Peupler le select avec les utilisateurs existants
+    populateUserSelect() {
+        const allUsers = this.userManager.getAllUsers();
+        const currentUser = this.userManager.getCurrentUser();
+        
+        // Filtrer l'utilisateur actuellement connecté
+        const availableUsers = allUsers.filter(user => user !== currentUser);
+        
+        // Vider le select
+        this.ui.domElements.usernameSelect.innerHTML = '<option value="">-- Choisir un utilisateur --</option>';
+        
+        // Si aucun utilisateur n'existe, cacher le select
+        if (availableUsers.length === 0) {
+            this.ui.domElements.usernameSelect.classList.add('hidden');
+            this.ui.domElements.usernameInput.value = '';
+            return;
+        }
+        
+        // Si un seul utilisateur existe, le mettre directement dans l'input
+        if (availableUsers.length === 1 && !this.userManager.isLoggedIn()) {
+            this.ui.domElements.usernameSelect.classList.add('hidden');
+            this.ui.domElements.usernameInput.value = availableUsers[0];
+            return;
+        }
+        
+        // Sinon, afficher le select avec tous les utilisateurs disponibles
+        if (!this.userManager.isLoggedIn()) {
+            this.ui.domElements.usernameSelect.classList.remove('hidden');
+            
+            availableUsers.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user;
+                option.textContent = user;
+                this.ui.domElements.usernameSelect.appendChild(option);
+            });
+        } else {
+            this.ui.domElements.usernameSelect.classList.add('hidden');
+        }
+    }
+    
     // Gestion de la connexion
     handleLogin() {
         const username = this.ui.domElements.usernameInput.value.trim();
@@ -291,7 +352,13 @@ class WordGuessingGame {
             this.loadUserData();
             this.ui.showFeedback(`Bienvenue ${username} ! Tes données ont été chargées.`, 'success');
             this.ui.setCurrentUser(username);
+            
+            // Réinitialiser le style du bouton
+            this.ui.domElements.loginBtn.classList.remove('btn-ready');
+            this.ui.domElements.loginBtn.style.background = '';
+            
             this.updateVisibility();
+            this.populateUserSelect();
         } else {
             this.ui.showFeedback('Erreur lors de la connexion.', 'error');
         }
@@ -301,6 +368,7 @@ class WordGuessingGame {
         this.userManager.logout();
         this.updateVisibility();
         this.updateCategorySelect();
+        this.populateUserSelect();
         this.ui.showFeedback('Déconnexion réussie. Tes données sont sauvegardées.', 'info');
     }
 

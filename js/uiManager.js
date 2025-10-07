@@ -20,6 +20,7 @@ class UIManager {
             wordDisplay: document.getElementById('wordDisplay'),
             feedback: document.getElementById('feedback'),
             usernameInput: document.getElementById('usernameInput'),
+            usernameSelect: document.getElementById('usernameSelect'),
             loginBtn: document.getElementById('loginBtn'),
             logoutBtn: document.getElementById('logoutBtn'),
             userInfo: document.getElementById('userInfo'),
@@ -211,6 +212,7 @@ class UIManager {
     // Afficher/masquer les sections selon l'état de connexion
     updateVisibilityForLogin(isLoggedIn) {
         if (isLoggedIn) {
+            this.domElements.usernameSelect.classList.add('hidden');
             this.domElements.usernameInput.style.display = 'none';
             this.domElements.loginBtn.style.display = 'none';
             this.domElements.userInfo.classList.remove('hidden');

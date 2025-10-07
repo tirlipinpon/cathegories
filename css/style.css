@@ -72,6 +72,29 @@ h1 {
     box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
 }
 
+.username-select {
+    font-size: 1em;
+    padding: 10px 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    width: 220px;
+    margin-right: 10px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    background: white;
+    cursor: pointer;
+}
+
+.username-select:hover {
+    border-color: #667eea;
+}
+
+.username-select:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+}
+
 .user-info {
     margin-top: 15px;
     padding: 10px;
@@ -654,6 +677,21 @@ h1 {
 
 .btn:active {
     transform: translateY(0);
+}
+
+.btn-ready {
+    background: linear-gradient(45deg, #10b981, #059669) !important;
+    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4) !important;
+    animation: pulse-ready 1.5s ease infinite;
+}
+
+@keyframes pulse-ready {
+    0%, 100% {
+        box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+    }
+    50% {
+        box-shadow: 0 5px 25px rgba(16, 185, 129, 0.7);
+    }
 }
 
 .feedback {

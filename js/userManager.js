@@ -97,6 +97,24 @@ class UserManager {
         return wordsFoundCookie !== null;
     }
 
+    // Obtenir tous les utilisateurs existants
+    getAllUsers() {
+        const users = [];
+        const cookies = document.cookie.split(';');
+        
+        cookies.forEach(cookie => {
+            const trimmed = cookie.trim();
+            if (trimmed.startsWith(`${this.COOKIE_PREFIX}wordsFound_`)) {
+                const username = trimmed.split('=')[0].replace(`${this.COOKIE_PREFIX}wordsFound_`, '');
+                if (username && !users.includes(username)) {
+                    users.push(username);
+                }
+            }
+        });
+        
+        return users.sort();
+    }
+
     // Obtenir tous les mots trouvés
     getAllWordsFound() {
         return [...new Set(this.wordsFound)]; // Supprime les doublons
@@ -128,7 +146,9 @@ class UserManager {
     setCookie(name, value, days) {
         const expires = new Date();
         expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
-        document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+        const encodedValue = encodeURIComponent(value);
+        document.cookie = `${name}=${encodedValue};expires=${expires.toUTCString()};path=/`;
+        console.log(`🍪 Cookie enregistré: ${name}`);
     }
 
     getCookie(name) {
@@ -137,7 +157,10 @@ class UserManager {
         for (let i = 0; i < ca.length; i++) {
             let c = ca[i];
             while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            if (c.indexOf(nameEQ) === 0) {
+                const encodedValue = c.substring(nameEQ.length, c.length);
+                return decodeURIComponent(encodedValue);
+            }
         }
         return null;
     }
