@@ -1,6 +1,6 @@
 // Jeu principal - Orchestrateur
-// Version: 2.1.1
-const GAME_VERSION = '2.1.1';
+// Version: 2.2.3
+const GAME_VERSION = '2.2.3';
 
 class WordGuessingGame {
     constructor() {
@@ -160,13 +160,32 @@ class WordGuessingGame {
             const option = document.createElement('option');
             option.value = categoryKey;
             
-            // Afficher nom + nombre SEULEMENT si pas "toutes"
-            if (categoryKey === 'toutes') {
-                option.textContent = getCategoryName(categoryKey);
+            // Afficher avec compteurs SEULEMENT si connecté
+            if (this.userManager.isLoggedIn()) {
+                if (categoryKey === 'toutes') {
+                    // Pour "toutes", afficher seulement le nombre de mots trouvés
+                    const wordsFound = this.userManager.getWordsFound();
+                    if (wordsFound.length > 0) {
+                        option.textContent = `${getCategoryName(categoryKey)} (✅${wordsFound.length})`;
+                        option.style.fontWeight = 'bold';
+                    } else {
+                        option.textContent = getCategoryName(categoryKey);
+                    }
+                } else {
+                    // Pour les autres catégories, afficher trouvés/total si au moins 1 trouvé
+                    const counts = getFoundAndTotalCount(categoryKey, GAME_DATA, this.userManager);
+                    
+                    if (counts.found > 0) {
+                        option.textContent = `${getCategoryName(categoryKey)} (✅${counts.found}/${counts.total})`;
+                        option.style.fontWeight = 'bold';
+                    } else {
+                        // Si 0 trouvé, afficher juste le nom
+                        option.textContent = getCategoryName(categoryKey);
+                    }
+                }
             } else {
-                // Compter les mots RESTANTS dans cette catégorie
-                const wordCount = getWordCountInCategory(categoryKey, GAME_DATA, this.userManager);
-                option.textContent = `${getCategoryName(categoryKey)} (${wordCount})`;
+                // Si pas connecté, afficher juste le nom
+                option.textContent = getCategoryName(categoryKey);
             }
             
             if (categoryKey === this.currentCategory) {
@@ -176,7 +195,7 @@ class WordGuessingGame {
             select.appendChild(option);
         });
         
-        console.log(`🗂️ Catégories disponibles: ${availableCategories.length} (mots restants affichés)`);
+        console.log(`🗂️ Catégories disponibles: ${availableCategories.length} (trouvés/total affichés)`);
     }
     
     // Activer/Désactiver les sons

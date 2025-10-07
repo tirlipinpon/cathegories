@@ -120,6 +120,27 @@ function getWordCountInCategory(categoryKey, gameData, userManager = null) {
     return availableWords.length;
 }
 
+// Fonction pour compter les mots trouvés et le total dans une catégorie
+function getFoundAndTotalCount(categoryKey, gameData, userManager = null) {
+    const wordsInCategory = getWordsByCategory(categoryKey, gameData);
+    const totalCount = wordsInCategory.length;
+    
+    // Si pas d'utilisateur connecté, 0 trouvé
+    if (!userManager || !userManager.isLoggedIn()) {
+        return { found: 0, total: totalCount, remaining: totalCount };
+    }
+    
+    // Compter les mots trouvés
+    const wordsFound = userManager.getWordsFound();
+    const foundInCategory = wordsInCategory.filter(word => wordsFound.includes(word)).length;
+    
+    return {
+        found: foundInCategory,
+        total: totalCount,
+        remaining: totalCount - foundInCategory
+    };
+}
+
 // Obtenir le nom d'une catégorie
 function getCategoryName(categoryKey) {
     const cat = getCategoryByKey(categoryKey);
