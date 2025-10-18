@@ -32,6 +32,16 @@ class UIManager {
     createLetterBoxes(wordLength) {
         this.domElements.wordDisplay.innerHTML = '';
         
+        // Ajouter une classe selon le nombre de lettres pour adapter la taille
+        this.domElements.wordDisplay.classList.remove('word-7letters', 'word-8letters', 'word-9plus');
+        if (wordLength === 7) {
+            this.domElements.wordDisplay.classList.add('word-7letters');
+        } else if (wordLength === 8) {
+            this.domElements.wordDisplay.classList.add('word-8letters');
+        } else if (wordLength >= 9) {
+            this.domElements.wordDisplay.classList.add('word-9plus');
+        }
+        
         for (let i = 0; i < wordLength; i++) {
             const letterBox = document.createElement('div');
             letterBox.className = 'letter-box';
