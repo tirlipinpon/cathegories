@@ -6,6 +6,9 @@ class UserManager {
         
         // Préfixe unique pour éviter les conflits avec d'autres applications
         this.COOKIE_PREFIX = 'categories_game_';
+        
+        // Session Manager pour la gestion de session multi-app
+        this.sessionManager = new SessionManager();
     }
 
     // Connexion d'un utilisateur
@@ -15,12 +18,19 @@ class UserManager {
         }
 
         this.currentUser = username.trim();
+        
+        // Sauvegarder la session (partagée entre toutes les apps)
+        this.sessionManager.login(this.currentUser);
+        
         this.loadUserData();
         return true;
     }
 
     // Déconnexion
     logout() {
+        // Déconnecter de la session partagée
+        this.sessionManager.logout();
+        
         this.currentUser = null;
         this.wordsFound = [];
     }
@@ -134,7 +144,20 @@ class UserManager {
 
     // Vérifier si un utilisateur est connecté
     isLoggedIn() {
-        return this.currentUser !== null;
+        return this.currentUser !== null && this.sessionManager.isLoggedIn();
+    }
+    
+    // Restaurer automatiquement la session au chargement
+    restoreSession() {
+        if (this.sessionManager.isLoggedIn()) {
+            const savedUser = this.sessionManager.getCurrentUser();
+            if (savedUser) {
+                this.currentUser = savedUser;
+                this.loadUserData();
+                return true;
+            }
+        }
+        return false;
     }
 
     // Obtenir le nom de l'utilisateur connecté

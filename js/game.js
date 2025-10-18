@@ -1,6 +1,6 @@
 // Jeu principal - Orchestrateur
-// Version: 2.3.0
-const GAME_VERSION = '2.3.0';
+// Version: 2.4.0
+const GAME_VERSION = '2.4.0';
 
 class WordGuessingGame {
     constructor() {
@@ -46,12 +46,22 @@ class WordGuessingGame {
     }
 
     initializeGame() {
-        // Ne lancer un mot que si l'utilisateur n'est pas connecté
-        if (!this.userManager.isLoggedIn()) {
-            this.selectRandomWord();
-            this.ui.createLetterBoxes(this.currentWord.length);
-            this.hintManager.resetHelp();
-            this.inputHandler.reset();
+        // Restaurer la session automatiquement
+        const sessionRestored = this.userManager.restoreSession();
+        
+        if (sessionRestored) {
+            console.log(`🔄 Session restaurée automatiquement : ${this.userManager.getCurrentUser()}`);
+            this.ui.setCurrentUser(this.userManager.getCurrentUser());
+            this.updateVisibility();
+            this.loadUserData();
+        } else {
+            // Ne lancer un mot que si l'utilisateur n'est pas connecté
+            if (!this.userManager.isLoggedIn()) {
+                this.selectRandomWord();
+                this.ui.createLetterBoxes(this.currentWord.length);
+                this.hintManager.resetHelp();
+                this.inputHandler.reset();
+            }
         }
     }
 
